@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="description"
+      content="수영이에게 인편을 쉽고 빠르게 보내기 위한 사이트입니다."
+    />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <meta property="og:title" content="" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="" />
+    <meta property="og:image" content="" />
+
+    <link rel="manifest" href="site.webmanifest" />
+    <link rel="apple-touch-icon" href="icon.png" />
+    <title>front test</title>
+
+    <!-- Font-->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+
+    <meta name="theme-color" content="#fafafa" />
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="spacer"></div>
+      <div class="center">
+        <div class="title">
+          <div class="main">
+            <span class="f1 subt">오수영에게 닿는 가장 빠른 방법<br /></span>
+            <span class="f7 t">오수영<br /></span>
+            <span class="f9 t tc">인편 핫-라인</span>
+          </div>
+          <div class="line"></div>
+          <div class="period">
+            <span class="f7">운영기간<br /></span>
+            <span class="f1">2020.XX.XX <br />_2020.XX.XX</span>
+          </div>
+        </div>
+        <div class="col">
+          <div class="l card">
+            <span class="cardt">작성&<br />전달된 편지수</span><br />
+            <div class="align">
+              <div class="spacer"></div>
+              <paper-graph value="30" today="10" max="40"></paper-graph>
+            </div>
+          </div>
+        </div>
+        <div class="col2">
+          <div class="row">
+            <pro-bar id="cp" class="card date" value="30%">
+              <span class="cardt date">수료까지</span><br />
+              <div class="tcenter">
+                <count-up
+                  id="cpFig"
+                  value="31"
+                  dur="1.5"
+                  class="bigdate"
+                ></count-up
+                ><span>일</span>
+              </div>
+            </pro-bar>
+            <pro-bar id="dc" class="card date" value="10%">
+              <span class="cardt">전역까지</span>
+              <div class="tcenter">
+                <count-up id="dcFig" value="123" dur="1.5" class="bigdate"
+                  >123</count-up
+                ><span>일</span>
+              </div>
+            </pro-bar>
+          </div>
+          <div class="row">
+            <div class="card" id="write">
+              <span class="cardt bg">수영이에게<br />인편을 써주시겠어요?</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                id="plane"
+                enable-background="new 0 0 465.882 465.882"
+                height="512"
+                viewBox="0 0 465.882 465.882"
+                width="512"
+                preserveAspectRatio="xMidYMin meet"
+              >
+                <defs>
+                  <linearGradient id="grad">
+                    <stop offset="0%" stop-color="var(--color-stop)" />
+                    <stop offset="100%" stop-color="var(--color-end)" />
+                  </linearGradient>
+                </defs>
+                <path
+                  d="m465.882 0-465.882 262.059 148.887 55.143 229.643-215.29-174.674 235.65.142.053-.174-.053v128.321l83.495-97.41 105.77 39.175z"
+                />
+              </svg>
+              <span id="writebut" class="but">편지 쓰기</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="spacer"></div>
+    </div>
+    <div id="letter" class="card letter slide">
+      <div class="header">
+        <span class="back mob material-icons but"> arrow_back </span>
+        <span class="f9">편지 보내기</span>
+        <span class="back pc f1 but">X</span>
+      </div>
+      <div class="sender">
+        <div class="circle">
+          <span id="pfbut" class="material-icons but">add</span>
+        </div>
+        <div class="info">
+          <div class="name">
+            <span id="name" class="f7">프로필</span
+            ><span id="rel" class="f7">등록 필요</span>
+          </div>
+          <div class="addr f2">
+            <span id="addr1">좌측의 +버튼을 눌러서 프로필을 등록해주세요</span>
+            <span id="addr2"></span>
+          </div>
+        </div>
+      </div>
+      <div class="letter">
+        <div class="ltitle">
+          <input class="f9" type="text" placeholder="제목을 입력해주세요" />
+        </div>
+        <div class="contents">
+          <textarea
+            class="f3"
+            placeholder="수영이에게 편지를 써주세요 :)"
+          ></textarea>
+        </div>
+      </div>
+      <div class="footer">
+        <span class="pc">보내기</span>
+        <span class="mob material-icons"> send </span>
+      </div>
+    </div>
+    <div id="profile" class="card addr slide">
+      <div class="header">
+        <span class="back mob material-icons but"> arrow_back </span>
+        <span class="f9">프로필 추가/수정</span>
+        <span class="back pc f1 but">X</span>
+      </div>
+      <div class="forms">
+        <div class="inp clsb">
+          <span>이름</span><input type="text" id="namef" placeholder="보라매" />
+        </div>
+        <div class="inp clsb">
+          <span>관계</span
+          ><input type="text" id="relf" placeholder="가족/친구 등" />
+        </div>
+        <div class="inp">
+          <span>주소</span
+          ><input type="text" id="postcode" placeholder="우편번호 검색" />
+
+          <input class="clsb" id="address" type="text" placeholder="주소" />
+
+          <input
+            class="clsb"
+            id="detailAddress"
+            type="text"
+            placeholder="상세주소 입력"
+          />
+
+          <input
+            class="clsb"
+            id="extraAddress"
+            type="text"
+            placeholder="상세주소2"
+          />
+        </div>
+      </div>
+      <div id="wrap"></div>
+      <div id="pfsavebut" class="footer clsb but">
+        <span>저장</span>
+      </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+  </body>
+</html>
