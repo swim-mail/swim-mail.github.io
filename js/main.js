@@ -427,11 +427,10 @@ document.addEventListener("DOMContentLoaded", () => {
 //테스트용 초기값
 chart.update(10, 123);
 
-
-    now = new Date();
-    offset = new Date(now * 1 + 110 * (1000 * 60 * 60 * 24));
-    completion.update(offset);
-    discharge.update(offset);
+now = new Date();
+offset = new Date(now * 1 + 110 * (1000 * 60 * 60 * 24));
+completion.update(offset);
+discharge.update(offset);
 
 /*let start = null;
 const realtimeDDay = (timestamp) => {
