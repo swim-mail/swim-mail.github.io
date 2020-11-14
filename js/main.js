@@ -426,7 +426,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 //테스트용 초기값
 chart.update(10, 123);
-let start = null;
+
+
+    now = new Date();
+    offset = new Date(now * 1 + 110 * (1000 * 60 * 60 * 24));
+    completion.update(offset);
+    discharge.update(offset);
+
+/*let start = null;
 const realtimeDDay = (timestamp) => {
   if (!start) start = timestamp;
   if (timestamp - start > 500) {
@@ -439,4 +446,4 @@ const realtimeDDay = (timestamp) => {
   window.requestAnimationFrame(realtimeDDay);
 };
 let timer = window.requestAnimationFrame(realtimeDDay);
-
+*/
