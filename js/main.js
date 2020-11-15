@@ -8,6 +8,7 @@ const PRECISION = 5;
 const DEFAULT_THROTTLE = 500;
 
 //Animator
+
 class Animator {
   constructor(throttle) {
     this.break = null;
@@ -15,7 +16,6 @@ class Animator {
   }
   register(f) {
     this.f = (timestamp) => {
-      if (!this.starttime) this.starttime = timestamp;
       if (!this.break) {
         if (timestamp - this.starttime > this.throttle) {
           this.starttime = timestamp;
@@ -27,14 +27,13 @@ class Animator {
   }
   start() {
     this.break = null;
-    this.starttime = null;
+    this.starttime = performance.now();
     window.requestAnimationFrame(this.f);
   }
   stop() {
     this.break = true;
   }
 }
-
 //Custom-Element 정의
 class PaperGraph extends HTMLElement {
   constructor() {
@@ -223,7 +222,7 @@ class ProBar extends HTMLElement {
   }
   attributeChangedCallback(attrName, oldVal, newVal) {
     this[attrName] = newVal;
-    this.fill();
+    if (newVal != oldVal) this.fill();
   }
 
   fill() {
@@ -286,6 +285,7 @@ DOMLinker(profile, { saveButton: "#pfsavebut" });
 
 //Pagination
 container.writeButton.addEventListener("click", () => {
+  rtd.stop();
   container.classList.add("blur");
   letter.classList.remove("slide");
 });
@@ -301,6 +301,8 @@ document.querySelectorAll(".back").forEach((x) => {
     currentPopup = x.parentElement.parentElement;
     currentPopup.classList.add("slide");
     currentPopup.previousElementSibling.classList.remove("blur");
+    if (currentPopup.previousElementSibling.classList.value == "container")
+      rtd.start();
   });
 });
 
@@ -463,11 +465,11 @@ document.addEventListener("DOMContentLoaded", () => {
 //테스트용 초기값
 chart.update(10, 123);
 
-const realtimeDDay = new Animator(1000);
-realtimeDDay.register(() => {
+const rtd = new Animator(300);
+rtd.register(() => {
   now = new Date();
   offset = new Date(now * 1 + 110 * (1000 * 60 * 60 * 24));
   completion.update(offset);
   discharge.update(offset);
 });
-realtimeDDay.start();
+rtd.start();
