@@ -300,6 +300,7 @@ container.writeButton.addEventListener("click", () => {
       addr1: DB.access.addr1,
       addr2: DB.access.addr2,
       addr3: DB.access.addr3,
+      pw: DB.access.pw,
     };
     profileInfo.render(pf);
     forms.update(pf);
@@ -318,8 +319,14 @@ document.querySelectorAll(".back").forEach((x) => {
     currentPopup = x.parentElement.parentElement;
     currentPopup.classList.add("slide");
     currentPopup.previousElementSibling.classList.remove("blur");
-    if (currentPopup.previousElementSibling.classList.value == "container")
+    if (currentPopup.previousElementSibling.classList.value == "container") {
       rtd.start();
+    } else {
+      document.querySelectorAll(".clsd").forEach((x) => {
+        x.classList.remove("clsd");
+      });
+      postal_wrap.style.display = "none";
+    }
   });
 });
 
@@ -377,8 +384,7 @@ const postalcodeSearch = () => {
   postal_wrap.style.display = "block";
 };
 
-document.getElementById("postcode").addEventListener("click", postalcodeSearch);
-document.getElementById("postcode").addEventListener("focus", postalcodeSearch);
+document.getElementById("postbut").addEventListener("click", postalcodeSearch);
 
 //프로필 저장
 const forms = {};
@@ -391,6 +397,7 @@ DOMLinker(
     addr1: "#address",
     addr2: "#detailAddress",
     addr3: "#extraAddress",
+    pw: "#pw",
   },
   "value"
 );
@@ -417,6 +424,7 @@ const DB = {
     ls.addr1 = x.addr1;
     ls.addr2 = x.addr2;
     ls.addr3 = x.addr3;
+    ls.pw = x.pw == "" ? x.name + x.postcode : x.pw;
   },
   access: localStorage,
 };
@@ -434,6 +442,7 @@ forms.update = (x) => {
   forms.addr1 = x.addr1;
   forms.addr2 = x.addr2;
   forms.addr3 = x.addr3;
+  forms.pw = x.pw;
 };
 document.querySelectorAll("#profile input").forEach((x) => {
   x.addEventListener("keyup", (y) => {

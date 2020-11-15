@@ -170,10 +170,10 @@
           <span>관계</span
           ><input type="text" id="relf" placeholder="가족/친구 등" />
         </div>
-        <div class="inp">
+        <div class="inp adr clsb">
           <span>주소</span
-          ><input type="text" id="postcode" placeholder="우편번호 검색" />
-
+          ><input type="text" id="postcode" placeholder="우편번호" />
+          <but class="but" id="postbut">찾기</but>
           <input class="clsb" id="address" type="text" placeholder="주소" />
 
           <input
@@ -189,6 +189,18 @@
             type="text"
             placeholder="상세주소2"
           />
+        </div>
+        <div class="inp clsb">
+          <span>암호</span>
+          <input type="password" id="pw" /><br />
+          <span class="caution">주의</span>
+          <span class="cautext"
+            >편의성을 위한 기능이니,
+            <b>민감한 암호를 저장하지 마십시오.</b></span
+          ><br />
+          <span class="cautext"
+            >지정하지 않으면 <b>이름+ 우편번호</b>로 설정됩니다.</span
+          >
         </div>
       </div>
       <div id="wrap"></div>
