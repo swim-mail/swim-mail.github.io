@@ -56,7 +56,7 @@ class PaperGraph extends HTMLElement {
     this.start();
   }
   start() {
-    if (!window.matchMedia("(min-width: 800px)").matches) {
+    if (!window.matchMedia("(min-width: 900px)").matches) {
       this.max = MAX_mobile;
     }
     const ss = `<style>
@@ -69,7 +69,7 @@ class PaperGraph extends HTMLElement {
       .tdfig{
         height:${Math.min(this.max - 10, Math.max(this.today, 10)) * 0.8}vw
       }
-    @media (max-width: 800px) {
+    @media (max-width: 900px) {
       paper-graph{
       min-height:15vw;
       height:${Math.min(55, 10 + 1.5 * Math.min(this.value, this.max))}vw;
@@ -166,7 +166,7 @@ let resizeTimer = null;
 window.addEventListener("optimizedResize", function () {
   clearTimeout(resizeTimer);
   resizeTimer = setTimeout(() => {
-    if (!window.matchMedia("(min-width: 800px)").matches) {
+    if (!window.matchMedia("(min-width: 900px)").matches) {
       if (chart.max != MAX_mobile) {
         chart.max = MAX_mobile;
         chart.start();
@@ -286,16 +286,33 @@ DOMLinker(profile, { saveButton: "#pfsavebut" });
 //Pagination
 container.writeButton.addEventListener("click", () => {
   rtd.stop();
+  history.pushState({ now: "letter" }, "", location.href);
+  history.pushState(null, "", location.href);
   container.classList.add("blur");
   letter.classList.remove("slide");
+
+  if (DB.access.getItem("name")) {
+    profileInfo.icon = "person";
+    pf = {
+      name: DB.access.name,
+      rel: DB.access.rel,
+      postcode: DB.access.postcode,
+      addr1: DB.access.addr1,
+      addr2: DB.access.addr2,
+      addr3: DB.access.addr3,
+    };
+    profileInfo.render(pf);
+    forms.update(pf);
+  }
 });
 
 letter.editProfileButton.addEventListener("click", () => {
+  history.replaceState({ now: "profile" }, "", location.href);
+  history.pushState(null, "", location.href);
   letter.classList.add("blur");
   profile.classList.remove("slide");
 });
 
-//뒤로가기
 document.querySelectorAll(".back").forEach((x) => {
   x.addEventListener("click", () => {
     currentPopup = x.parentElement.parentElement;
@@ -305,6 +322,15 @@ document.querySelectorAll(".back").forEach((x) => {
       rtd.start();
   });
 });
+
+window.onpopstate = (evt) => {
+  console.log(evt.state);
+  if (evt.state.now == "profile") {
+    document.querySelector("div#profile .back").click();
+  } else if (evt.state.now == "letter") {
+    document.querySelector("div#letter .back").click();
+  }
+};
 
 //우편번호 찾기
 const postal_wrap = document.getElementById("wrap");
@@ -446,21 +472,7 @@ AttrLinker(discharge, [
 ]);
 
 //로딩 후
-document.addEventListener("DOMContentLoaded", () => {
-  if (DB.access.getItem("name")) {
-    profileInfo.icon = "person";
-    pf = {
-      name: DB.access.name,
-      rel: DB.access.rel,
-      postcode: DB.access.postcode,
-      addr1: DB.access.addr1,
-      addr2: DB.access.addr2,
-      addr3: DB.access.addr3,
-    };
-    profileInfo.render(pf);
-    forms.update(pf);
-  }
-});
+document.addEventListener("DOMContentLoaded", () => {});
 
 //테스트용 초기값
 chart.update(10, 123);

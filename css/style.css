@@ -420,7 +420,7 @@ pro-bar #percent {
   transform: translate(0, 100vh);
   opacity: 0;
 }
-@media (max-width: 800px) {
+@media (max-width: 900px) {
   .slide {
     transform: translate(100vw, 0);
   }
@@ -435,7 +435,7 @@ pro-bar #percent {
   }
   .card {
     margin-left: 3vw;
-    margin-bottom: 5vw;
+    margin-bottom: 3vw;
     height: 70vw;
     border-radius: 20px;
     padding: 2vw;
@@ -520,11 +520,17 @@ pro-bar #percent {
     line-height: 21vw;
   }
   .tcenter {
-    margin-top: 1vw;
+    margin-top: 0;
     text-align: center;
+  }
+  .tcenter #percent {
+    line-height: 0;
   }
   .cardt {
     font-size: 4.5vw;
+  }
+  .card.date {
+    line-height: 1;
   }
 
   .subt {
@@ -534,15 +540,6 @@ pro-bar #percent {
   .t {
     font-size: calc(1.2em + 5vw);
     line-height: calc(1.2em + 1vw);
-  }
-  .card.date::after {
-    content: attr(value);
-    position: inherit;
-    float: right;
-    color: var(--theme-color-dark);
-    opacity: 30%;
-    font-size: 5vw;
-    line-height: 1vw;
   }
   .card.letter .pc,
   .card.addr .pc {
@@ -622,7 +619,7 @@ pro-bar #percent {
     height: 90vh;
   }
 }
-@media (min-width: 800px) {
+@media (min-width: 900px) {
   .title {
     width: calc(100px + 20vw);
     height: 100%;
