@@ -28,7 +28,7 @@ class Animator {
   start() {
     this.break = null;
     this.starttime = null;
-    this.handle = window.requestAnimationFrame(this.f);
+    window.requestAnimationFrame(this.f);
   }
   stop() {
     this.break = true;
@@ -218,6 +218,7 @@ class ProBar extends HTMLElement {
     return ["value"];
   }
   connectedCallback() {
+    this.pt = null;
     this.fill();
   }
   attributeChangedCallback(attrName, oldVal, newVal) {
@@ -226,14 +227,19 @@ class ProBar extends HTMLElement {
   }
 
   fill() {
-    let st = `
+    let nt = Number(this.value.split("%")[0]).toFixed(1);
+    this.querySelector("#percent").innerText = this.value;
+    if (!this.pt) this.pt = nt;
+    if (this.pt != nt) {
+      this.pt = nt;
+      let st = `
 --bg: linear-gradient(
   0deg,
-  var(--theme-color-light) ${this.value},
-  white ${this.value}
+  var(--theme-color-light) ${this.pt}%,
+  white ${this.pt}%
 );`;
-
-    this.style.cssText = st;
+      this.style.cssText = st;
+    }
   }
 }
 
@@ -422,7 +428,8 @@ function update(date) {
     Number(((date - ENLIST_DAY) / (this.end - ENLIST_DAY)) * 100).toFixed(
       PRECISION
     ) + "%";
-  this.left = Math.floor(diff(date, this.end));
+  let nleft = Math.floor(diff(date, this.end));
+  if (this.left != nleft) this.left = Math.floor(diff(date, this.end));
 }
 
 const completion = { end: COMPLETION_DAY, update: update };
@@ -456,7 +463,7 @@ document.addEventListener("DOMContentLoaded", () => {
 //테스트용 초기값
 chart.update(10, 123);
 
-const realtimeDDay = new Animator(500);
+const realtimeDDay = new Animator(1000);
 realtimeDDay.register(() => {
   now = new Date();
   offset = new Date(now * 1 + 110 * (1000 * 60 * 60 * 24));

@@ -227,8 +227,7 @@ paper-graph .ttfig {
     background-position: 0 0;
   }
 }
-.card.date::after {
-  content: attr(value);
+pro-bar #percent {
   position: inherit;
   float: right;
   color: var(--theme-color-dark);
@@ -390,7 +389,7 @@ paper-graph .ttfig {
 }
 .blur {
   filter: blur(2px) brightness(0.5);
-  background: #fefefe;
+  background: inherit;
 }
 #btnFoldWrap {
   cursor: pointer;
