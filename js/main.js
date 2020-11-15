@@ -5,6 +5,35 @@ const ENLIST_DAY = new Date("2021-02-15");
 const COMPLETION_DAY = new Date("2021-03-19");
 const DISCHARGE_DAY = new Date("2022-11-14");
 const PRECISION = 5;
+const DEFAULT_THROTTLE = 500;
+
+//Animator
+class Animator {
+  constructor(throttle) {
+    this.break = null;
+    this.throttle = throttle || DEFAULT_THROTTLE;
+  }
+  register(f) {
+    this.f = (timestamp) => {
+      if (!this.starttime) this.starttime = timestamp;
+      if (!this.break) {
+        if (timestamp - this.starttime > this.throttle) {
+          this.starttime = timestamp;
+          f();
+        }
+        window.requestAnimationFrame(this.f);
+      }
+    };
+  }
+  start() {
+    this.break = null;
+    this.starttime = null;
+    this.handle = window.requestAnimationFrame(this.f);
+  }
+  stop() {
+    this.break = true;
+  }
+}
 
 //Custom-Element 정의
 class PaperGraph extends HTMLElement {
@@ -427,22 +456,11 @@ document.addEventListener("DOMContentLoaded", () => {
 //테스트용 초기값
 chart.update(10, 123);
 
-now = new Date();
-offset = new Date(now * 1 + 110 * (1000 * 60 * 60 * 24));
-completion.update(offset);
-discharge.update(offset);
-
-/*let start = null;
-const realtimeDDay = (timestamp) => {
-  if (!start) start = timestamp;
-  if (timestamp - start > 500) {
-    now = new Date();
-    offset = new Date(now * 1 + 110 * (1000 * 60 * 60 * 24));
-    completion.update(offset);
-    discharge.update(offset);
-    start = timestamp;
-  }
-  window.requestAnimationFrame(realtimeDDay);
-};
-let timer = window.requestAnimationFrame(realtimeDDay);
-*/
+const realtimeDDay = new Animator(500);
+realtimeDDay.register(() => {
+  now = new Date();
+  offset = new Date(now * 1 + 110 * (1000 * 60 * 60 * 24));
+  completion.update(offset);
+  discharge.update(offset);
+});
+realtimeDDay.start();
