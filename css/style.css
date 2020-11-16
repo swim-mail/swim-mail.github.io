@@ -61,7 +61,8 @@ body {
   width: 20vw;
   float: right;
   fill: url(#grad);
-  animation: planeMove 1s cubic-bezier(0.83, 0, 0.17, 1) forwards;
+  animation: planeMove 1s cubic-bezier(0.83, 0, 0.17, 1) both;
+  animation-delay: 0.3s;
   padding: 1em;
 }
 
@@ -183,12 +184,12 @@ paper-graph #letterH {
   height: calc(100% - 3vw);
 }
 paper-graph .tdfig {
-  animation: moveUp 0.7s ease-in;
+  animation: moveUp 0.7s 0.1s ease-in;
   font-size: 0.9em;
 }
 paper-graph .ttfig {
   opacity: 0;
-  animation: moveUp 0.7s 0.1s ease-in forwards;
+  animation: moveUp 0.7s 0.2s ease-in forwards;
   font-size: 0.9em;
 }
 .tcenter {
@@ -458,10 +459,43 @@ span.cautext:last-child {
 .but {
   cursor: pointer;
 }
-
+.but:hover:not(#pfbut) {
+  filter: contrast(1.3);
+}
 .slide {
   transform: translate(0, 100vh);
   opacity: 0;
+}
+toast {
+  display: flex;
+  position: fixed;
+  bottom: 10vh;
+  width: 100vw;
+  transition: transform 1s cubic-bezier(0.83, 0, 0.17, 1);
+  font-weight: 400;
+  color: #555555;
+}
+toast.hide {
+  transform: translateY(20vh);
+}
+toast .tospacer {
+  flex: 1;
+}
+toast .content {
+  font-size: 1.3em;
+  background: #fafafa;
+  box-shadow: 2px 2px 7px 0px #999999;
+  border-radius: 2em;
+  padding: 0.5em 0.7em 0.3em 0.3em;
+}
+toast #icon {
+  background: var(--theme-color);
+  color: white;
+  border-radius: 1em;
+  margin-right: 0.5em;
+}
+toast #messages {
+  vertical-align: top;
 }
 @media (max-width: 900px) {
   .slide {
@@ -611,6 +645,15 @@ span.cautext:last-child {
   .card.addr .back.mob {
     font-size: 1.5em !important;
     vertical-align: top;
+  }
+  .card.letter .send {
+    float: right;
+    font-weight: 700;
+    background: var(--theme-color);
+    color: white;
+    padding: 0.2em 0.7em;
+    border-radius: 1em;
+    font-size: 0.9em;
   }
   .card.letter .sender {
     padding: 3vw;

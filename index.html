@@ -124,6 +124,7 @@
         <span class="back mob material-icons but"> arrow_back </span>
         <span class="f9">편지 보내기</span>
         <span class="back pc f1 but">X</span>
+        <span class="send mob but" id="send">보내기</span>
       </div>
       <div class="sender">
         <div class="circle">
@@ -152,8 +153,7 @@
         </div>
       </div>
       <div class="footer">
-        <span class="pc">보내기</span>
-        <span class="mob material-icons"> send </span>
+        <span class="pc but" id="send">보내기</span>
       </div>
     </div>
     <div id="profile" class="card addr slide">
@@ -195,8 +195,7 @@
           <input type="password" id="pw" /><br />
           <span class="caution">주의</span>
           <span class="cautext"
-            >편의성을 위한 기능이니,
-            <b>민감한 암호를 저장하지 마십시오.</b></span
+            >편의성을 위한 기능으로 <b>보안성이 없습니다.</b> </span
           ><br />
           <span class="cautext"
             >지정하지 않으면 <b>이름+ 우편번호</b>로 설정됩니다.</span
@@ -208,6 +207,14 @@
         <span>저장</span>
       </div>
     </div>
+    <toast class="hide"
+      ><div class="tospacer"></div>
+      <div class="content">
+        <span class="material-icons" id="icon">check</span
+        ><span id="messages">toast message</span>
+      </div>
+      <div class="tospacer"></div>
+    </toast>
 
     <script src="js/main.js"></script>
     <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>

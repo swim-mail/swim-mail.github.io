@@ -246,6 +246,27 @@ customElements.define("paper-graph", PaperGraph);
 customElements.define("count-up", CountUp);
 customElements.define("pro-bar", ProBar);
 
+const toast = (type, msg, interval = 3000) => {
+  let t = document.querySelector("toast");
+  let icon = document.querySelector("toast #icon");
+  let message = document.querySelector("toast #messages");
+  if (type == "warning") {
+    icon.innerText = "priority_high";
+    icon.style.cssText = "background:#e3002d";
+  } else if (type == "success") {
+    icon.innerText = "check";
+    icon.style.cssText = "background:#1b8558";
+  } else {
+    icon.innerText = "notifications";
+    icon.style.cssText = "background:#e8b600";
+  }
+  message.innerText = msg;
+  t.classList.remove("hide");
+  window.setTimeout(() => {
+    t.classList.add("hide");
+  }, interval);
+};
+
 //DOM 조작
 const DOMLinker = (obj, properties, option) => {
   for (let [key, value] of Object.entries(properties)) {
@@ -279,7 +300,10 @@ const AttrLinker = (obj, properties) => {
 const container = document.querySelector(".container");
 DOMLinker(container, { writeButton: "#writebut" });
 const letter = document.querySelector("div#letter");
-DOMLinker(letter, { editProfileButton: "#pfbut" });
+DOMLinker(letter, {
+  editProfileButton: "#pfbut",
+  exitButton: "div#letter .back",
+});
 const profile = document.querySelector("#profile");
 DOMLinker(profile, { saveButton: "#pfsavebut" });
 
@@ -331,13 +355,24 @@ document.querySelectorAll(".back").forEach((x) => {
 });
 
 window.onpopstate = (evt) => {
-  console.log(evt.state);
-  if (evt.state.now == "profile") {
-    document.querySelector("div#profile .back").click();
-  } else if (evt.state.now == "letter") {
-    document.querySelector("div#letter .back").click();
+  try {
+    if (evt.state.now == "profile") {
+      document.querySelector("div#profile .back").click();
+    } else if (evt.state.now == "letter") {
+      document.querySelector("div#letter .back").click();
+    }
+  } catch (err) {
+    history.back();
   }
 };
+//Esc
+document.addEventListener("keyup", (y) => {
+  if (
+    y.key == "Escape" &&
+    !document.querySelector("div#letter").classList.contains("slide")
+  )
+    history.back();
+});
 
 //우편번호 찾기
 const postal_wrap = document.getElementById("wrap");
@@ -453,6 +488,7 @@ profile.saveButton.addEventListener("click", () => {
   DB.save(forms);
   profileInfo.render(forms);
   profile.querySelector(".back").click();
+  toast("success", "프로필을 저장하였습니다.");
 });
 
 //d-day 위젯들
@@ -480,8 +516,33 @@ AttrLinker(discharge, [
   ["left", "#dcFig", "value"],
 ]);
 
-//로딩 후
-document.addEventListener("DOMContentLoaded", () => {});
+//편지 전송
+DOMLinker(letter, { title: ".ltitle input", contents: ".contents textarea" });
+
+const send = () => {
+  let data = {
+    zipcode: forms.postcode,
+    addr1: forms.addr1,
+    addr2: forms.addr2 + forms.addr3,
+    name: forms.name,
+    relationship: forms.rel,
+    title: letter.title.value,
+    contents: letter.contents.value,
+    password: forms.pw,
+  };
+  console.log(JSON.stringify(data));
+
+  letter.exitButton.click();
+  window.setTimeout(() => {
+    letter.title.value = "";
+    letter.contents.value = "";
+  }, 1000);
+
+  toast("success", "전송되었습니다.");
+};
+document.querySelectorAll("#send").forEach((x) => {
+  x.addEventListener("click", send);
+});
 
 //테스트용 초기값
 chart.update(10, 123);
