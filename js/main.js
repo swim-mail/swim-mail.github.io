@@ -190,20 +190,26 @@ class CountUp extends HTMLElement {
     return ["value", "dur"];
   }
   connectedCallback() {
-    window.requestAnimationFrame(this.frame.bind(this));
+    if (this.value != "") {
+      this.go();
+    }
   }
   attributeChangedCallback(attrName, oldVal, newVal) {
     this[attrName] = newVal;
+    if (this.value != "") {
+      this.go();
+    }
+  }
+  go() {
+    this.start = performance.now();
     window.requestAnimationFrame(this.frame.bind(this));
   }
-
   frame(timestamp) {
     const easeOut = (t) => (t > 1 ? 1 : t * (2 - t));
-    if (!this.start) this.start = timestamp;
     let d = timestamp - this.start;
-    this.i = Math.ceil(easeOut(d / (this.dur * 1000)) * this.value);
-    this.innerText = this.i;
+    this.i = easeOut(d / (this.dur * 1000)) * this.value;
     if (this.i < this.value) {
+      this.innerText = Math.ceil(this.i);
       window.requestAnimationFrame(this.frame.bind(this));
     }
   }
@@ -277,9 +283,11 @@ const DOMLinker = (obj, properties, option) => {
           : document.querySelector(value);
       },
       set(x) {
-        option
-          ? (document.querySelector(value)[option] = x)
-          : (document.querySelector(value) = x);
+        if (option) {
+          document.querySelector(value)[option] = x;
+        } else {
+          //document.querySelector(value) = x;
+        }
       },
     });
   }
