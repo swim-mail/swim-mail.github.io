@@ -558,7 +558,7 @@ chart.update(10, 123);
 const rtd = new Animator(300);
 rtd.register(() => {
   now = new Date();
-  offset = new Date(now * 1 + 110 * (1000 * 60 * 60 * 24));
+  offset = new Date(now * 1 + 50 * (1000 * 60 * 60 * 24));
   completion.update(offset);
   discharge.update(offset);
 });
