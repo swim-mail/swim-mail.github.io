@@ -551,6 +551,16 @@ const send = () => {
 document.querySelectorAll("#send").forEach((x) => {
   x.addEventListener("click", send);
 });
+//서비스워커
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+      navigator.serviceWorker.register('service-worker.js') // serviceWorker 파일 경로
+          .then((reg) => {
+              console.log('Service worker registered.', reg);
+          })
+          .catch(e => console.log(e));
+  });
+}
 
 //테스트용 초기값
 chart.update(10, 123);
