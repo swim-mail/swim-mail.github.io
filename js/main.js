@@ -563,14 +563,24 @@ if ("serviceWorker" in navigator) {
   });
 }
 //install prompt
-window.addEventListener("beforeinstallprompt", function (event) {
-  event.preventDefault();
-  window.promptEvent = event;
-  if (window.matchMedia("(display-mode: standalone)").matches) {
-    console.log("display-mode is standalone");
-  } else {
-    setVisible(true);
-  }
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+
+  addBtn = document.querySelector("#install");
+  addBtn.style.display = "inline";
+  addBtn.addEventListener("click", (e) => {
+    addBtn.style.display = "none";
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === "accepted") {
+        console.log("User accepted the A2HS prompt");
+      } else {
+        console.log("User dismissed the A2HS prompt");
+      }
+      deferredPrompt = null;
+    });
+  });
 });
 //테스트용 초기값
 chart.update(10, 123);
