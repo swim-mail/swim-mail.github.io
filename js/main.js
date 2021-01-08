@@ -6,6 +6,7 @@ const COMPLETION_DAY = new Date("2021-03-19");
 const DISCHARGE_DAY = new Date("2022-11-14");
 const PRECISION = 5;
 const DEFAULT_THROTTLE = 500;
+//const API_PATH = "http://127.0.0.1:8088";
 
 //Animator
 
@@ -323,7 +324,9 @@ container.writeButton.addEventListener("click", (evt) => {
   rtd.stop();
   container.classList.add("blur");
   letter.classList.remove("slide");
-
+  if ((tempLetter = forms.tempLoad())) {
+    [forms.title, forms.body] = [tempLetter.title, tempLetter.body];
+  }
   if (DB.access.getItem("name")) {
     profileInfo.icon = "person";
     pf = {
@@ -447,7 +450,21 @@ const postalcodeSearch = () => {
 document.getElementById("postbut").addEventListener("click", postalcodeSearch);
 
 //프로필 저장
-const forms = {};
+const forms = {
+  tempSave: () => {
+    DB.access.tempLetter = JSON.stringify({
+      title: forms.title,
+      body: forms.body,
+    });
+  },
+  tempLoad: () => {
+    try {
+      return JSON.parse(DB.access.tempLetter);
+    } catch {
+      return false;
+    }
+  },
+};
 DOMLinker(
   forms,
   {
@@ -458,6 +475,8 @@ DOMLinker(
     addr2: "#detailAddress",
     addr3: "#extraAddress",
     pw: "#pw",
+    title: ".ltitle input",
+    body: ".contents textarea",
   },
   "value"
 );
@@ -540,9 +559,24 @@ AttrLinker(discharge, [
   ["percent", "pro-bar#dc", "value"],
   ["left", "#dcFig", "value"],
 ]);
-
+//편지 임시저장 기능
+let unchanged = 0;
+const autosaver = window.setInterval(() => {
+  if (!letter.classList.contains("slide")) {
+    if (forms.tempLoad() == false) {
+      forms.tempSave();
+    } else if (forms.tempLoad().body != forms.body) {
+      unchanged = 0;
+      forms.tempSave();
+    } else if (unchanged <= 5) {
+      unchanged += 1;
+      if (unchanged > 5) {
+        toast("", "자동 저장되었습니다.");
+      }
+    }
+  }
+}, 1000);
 //편지 전송
-DOMLinker(letter, { title: ".ltitle input", contents: ".contents textarea" });
 
 const send = () => {
   let data = {
@@ -551,19 +585,41 @@ const send = () => {
     addr2: forms.addr2 + forms.addr3,
     name: forms.name,
     relationship: forms.rel,
-    title: letter.title.value,
-    contents: letter.contents.value,
+    title: forms.title,
+    contents: forms.body,
     password: forms.pw,
+  };
+  //API 연동부분
+  ajax = async () => {
+    /*
+    const res = await fetch(API_PATH, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    const body = await res.json();
+    return Number(body.result);*/
+    return -99;
   };
   console.log(JSON.stringify(data));
 
-  letter.exitButton.click();
-  window.setTimeout(() => {
-    letter.title.value = "";
-    letter.contents.value = "";
-  }, 1000);
-
-  toast("success", "전송되었습니다.");
+  ajax().then((res) => {
+    if (res == 2) {
+      letter.exitButton.click();
+      window.setTimeout(() => {
+        forms.title = "";
+        forms.body = "";
+        forms.tempSave();
+      }, 1000);
+      toast("success", "전송되었습니다.");
+    } else if (res == -1) {
+      toast("warning", "공군 서버 응답없음- 다시 시도해주세요!");
+    } else if (res == -2) {
+      toast("warning", "전송 과정 오류 - 다시 시도해주세요!");
+    } else if (res == -99) {
+      toast("warning", "개발중입니다.");
+    }
+  });
 };
 document.querySelectorAll("#send").forEach((x) => {
   x.addEventListener("click", send);
