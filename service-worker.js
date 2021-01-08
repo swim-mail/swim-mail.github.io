@@ -14,17 +14,18 @@ const FILES_TO_CACHE = [
 ];
 
 self.addEventListener("install", (event) => {
+  console.log("tetst");
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(FILES_TO_CACHE))
   );
 });
+
 self.addEventListener("fetch", function (e) {
   e.respondWith(
     caches.match(e.request).then(function (r) {
       console.log("[Service Worker] Fetching resource: " + e.request.url);
-      return (
-        r ||
-        fetch(e.request).then(function (response) {
+      return fetch(e.request)
+        .then(function (response) {
           return caches.open(CACHE_NAME).then(function (cache) {
             console.log(
               "[Service Worker] Caching new resource: " + e.request.url
@@ -33,7 +34,9 @@ self.addEventListener("fetch", function (e) {
             return response;
           });
         })
-      );
+        .catch((e) => {
+          return r;
+        });
     })
   );
 });

@@ -316,10 +316,11 @@ const profile = document.querySelector("#profile");
 DOMLinker(profile, { saveButton: "#pfsavebut" });
 
 //Pagination
-container.writeButton.addEventListener("click", () => {
+container.writeButton.addEventListener("click", (evt) => {
+  if (evt.isTrusted) {
+    history.pushState({ now: "letter" }, "", location.href);
+  }
   rtd.stop();
-  history.pushState({ now: "letter" }, "", location.href);
-  history.pushState(null, "", location.href);
   container.classList.add("blur");
   letter.classList.remove("slide");
 
@@ -339,9 +340,10 @@ container.writeButton.addEventListener("click", () => {
   }
 });
 
-letter.editProfileButton.addEventListener("click", () => {
-  history.replaceState({ now: "profile" }, "", location.href);
-  history.pushState(null, "", location.href);
+letter.editProfileButton.addEventListener("click", (evt) => {
+  if (evt.isTrusted) {
+    history.pushState({ now: "profile" }, "", location.href);
+  }
   letter.classList.add("blur");
   profile.classList.remove("slide");
 });
@@ -365,14 +367,29 @@ document.querySelectorAll(".back").forEach((x) => {
 window.onpopstate = (evt) => {
   try {
     if (evt.state.now == "profile") {
-      document.querySelector("div#profile .back").click();
+      letter.editProfileButton.click();
     } else if (evt.state.now == "letter") {
+      document.querySelector("div#profile .back").click();
+      if (letter.classList.contains("slide")) {
+        container.writeButton.click();
+      }
+    } else if (evt.state.now == "main") {
       document.querySelector("div#letter .back").click();
+    } else if (evt.state.beforeExit) {
+      toast("", "뒤로 버튼을 한번 더 누르면 종료됩니다.");
+    } else {
     }
   } catch (err) {
     history.back();
   }
 };
+
+window.addEventListener("load", function () {
+  console.log("load history hooked");
+  window.history.pushState({ beforeExit: true }, "");
+  window.history.pushState({ now: "main" }, "");
+});
+
 //Esc
 document.addEventListener("keyup", (y) => {
   if (
@@ -574,9 +591,9 @@ window.addEventListener("beforeinstallprompt", (e) => {
     deferredPrompt.prompt();
     deferredPrompt.userChoice.then((choiceResult) => {
       if (choiceResult.outcome === "accepted") {
-        console.log("User accepted the A2HS prompt");
+        //console.log("User accepted the A2HS prompt");
       } else {
-        console.log("User dismissed the A2HS prompt");
+        //console.log("User dismissed the A2HS prompt");
       }
       deferredPrompt = null;
     });
@@ -588,7 +605,7 @@ chart.update(10, 123);
 const rtd = new Animator(300);
 rtd.register(() => {
   now = new Date();
-  offset = new Date(now * 1 + 50 * (1000 * 60 * 60 * 24));
+  offset = new Date(now * 1 + 40 * (1000 * 60 * 60 * 24));
   completion.update(offset);
   discharge.update(offset);
 });
