@@ -324,6 +324,14 @@ container.writeButton.addEventListener("click", (evt) => {
   rtd.stop();
   container.classList.add("blur");
   letter.classList.remove("slide");
+  if (!DB.access.name || !DB.access.password) {
+    setTimeout(() => {
+      document.querySelector(".sender").classList.add("highlight");
+    }, 1000);
+    setTimeout(() => {
+      document.querySelector(".sender").classList.remove("highlight");
+    }, 3000);
+  }
   if ((tempLetter = forms.tempLoad())) {
     [forms.title, forms.body] = [tempLetter.title, tempLetter.body];
   }

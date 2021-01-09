@@ -259,8 +259,8 @@ pro-bar #percent {
 .card.letter .header,
 .card.addr .header {
   width: calc(100% - 1.3em);
-  border-bottom: 1px solid#999999;
-  padding: 0.3em;
+  border-bottom: 1px solid#CACACA;
+  padding: 0 0.3em 0.5em.3em;
   margin: 0.3em;
   font-size: 1.5em;
   text-align: center;
@@ -269,19 +269,64 @@ pro-bar #percent {
 .card.addr .header .pc.back {
   background: #cccccc;
   border-radius: 1000px;
-  padding: 0 0.5em 0 0.5em;
   float: right;
-  color: #333333;
+  color: #555555;
+  display: block;
+  width: 1.5em;
+  height: 1.5em;
 }
 .card.letter .sender {
   display: flex;
+  margin-top: 0.22m;
+  padding: 0.1em;
+  border-radius: 2em;
+  transition: all 1s cubic-bezier(0.83, 0, 0.17, 1);
+}
+.card.letter .sender.highlight {
+  box-shadow: -1px 1px 9px 0px rgba(0, 0, 0, 0.2);
+  transform: scale(1.05);
 }
 .card.letter .circle {
   background: var(--theme-color-light);
-  width: 4.5em;
-  height: 4.5em;
+  width: 3.7em;
+  height: 3.7em;
   border-radius: 4.5em;
-  margin: 0 1em 0 0.5em;
+  margin: 0 0.7em 0 0.5em;
+}
+
+.card.letter .sender.highlight .circle {
+  background: linear-gradient(
+    45deg,
+    var(--theme-color-light),
+    var(--theme-color),
+    var(--theme-color-dark),
+    var(--theme-color-light)
+  );
+  background-size: 800% 800%;
+  -webkit-animation: gradAni 2s ease both;
+  -moz-animation: gradAni 2s ease both;
+  animation: gradAni 2s ease both;
+}
+@keyframes gradAni {
+  0% {
+    background-position: 0% 50%;
+  }
+  40% {
+    background-position: 100% 50%;
+  }
+  80% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 0% 100%;
+  }
+}
+.card.letter .circle {
+  background: var(--theme-color-light);
+  width: 3.7em;
+  height: 3.7em;
+  border-radius: 4.5em;
+  margin: 0 0.7em 0 0.5em;
 }
 .card.letter .circle:hover {
   background: var(--theme-color-dark);
@@ -290,8 +335,8 @@ pro-bar #percent {
 .card.letter .circle span {
   font-size: 3em;
   color: white;
-  line-height: 1.5em;
-  padding-left: 0.25em;
+  line-height: 1.3em;
+  padding-left: 0.125em;
   width: 1.25em;
 }
 .card.letter .circle span:hover {
@@ -300,14 +345,14 @@ pro-bar #percent {
 .card.letter .circle span:hover::after {
   content: "create";
   position: absolute;
-  left: calc(0.4em + 1vw);
+  left: calc(0.3em + 1vw);
   color: white;
 }
 .card.letter .info {
   flex: 1;
 }
 .card.letter .info .name {
-  font-size: 1.7em;
+  font-size: 1.4em;
 }
 .card.letter .info .name #rel {
   font-size: 0.6em;
@@ -327,7 +372,8 @@ pro-bar #percent {
   padding: 1vw;
 }
 .card.letter .ltitle input {
-  font-size: 2em;
+  margin-top: 0.5em;
+  font-size: 1.7em;
   width: 100%;
   border: 0;
 }
@@ -338,7 +384,7 @@ pro-bar #percent {
   font-size: 1.5em;
   font-family: "Noto Sans KR", sans-serif;
   width: 100%;
-  height: calc(100vh - 14.5em);
+  height: calc(100vh - 13.3em - 1.5vw);
   border: 0;
 }
 .card.letter .contents textarea:focus {
@@ -349,11 +395,12 @@ pro-bar #percent {
   background: #bbbbbb;
   color: #555555;
   display: block;
-  width: 100%;
   font-size: 1.5em;
   text-align: center;
   padding: 0.1em 0;
   border-radius: 2em;
+  margin: 0 0.5em 0 0.5em;
+  font-weight: 500;
 }
 .card.addr .forms .inp {
   font-size: 1em;
@@ -435,7 +482,7 @@ span.cautext:last-child {
   margin-left: calc(13% + 3.3em);
 }
 .blur {
-  filter: blur(2px) brightness(0.5);
+  filter: contrast(0.25) brightness(1.5);
   background: inherit;
 }
 #btnFoldWrap {
@@ -472,10 +519,10 @@ span.cautext:last-child {
 toast {
   display: flex;
   position: fixed;
-  bottom: 10vh;
+  bottom: 7vh;
   width: 100vw;
   transition: transform 1s cubic-bezier(0.83, 0, 0.17, 1);
-  font-weight: 400;
+  font-weight: 600;
   color: #555555;
 }
 toast.hide {
@@ -485,7 +532,7 @@ toast .tospacer {
   flex: 1;
 }
 toast .content {
-  font-size: 1.3em;
+  font-size: 1.2em;
   background: #fafafa;
   box-shadow: 2px 2px 7px 0px #999999;
   border-radius: 2em;
@@ -496,8 +543,10 @@ toast #icon {
   color: white;
   border-radius: 1em;
   margin-right: 0.5em;
+  padding: 0.2em;
 }
 toast #messages {
+  line-height: 1.6em;
   vertical-align: top;
 }
 loading {
@@ -707,10 +756,10 @@ loading {
   }
   .card.letter .sender {
     padding: 3vw;
+    font-size: 1.2em;
   }
-
   .card.letter .circle span:hover::after {
-    left: calc(0.4em + 4vw);
+    left: calc(0.3em + 4vw);
   }
   .card.letter #addr2 {
     display: none;
@@ -754,8 +803,12 @@ loading {
   #wrap {
     height: 90vh;
   }
-  .blur {
-    filter: unset;
+  toast #icon {
+    margin-right: 0.4em;
+    padding: 0.1em;
+  }
+  toast #messages {
+    line-height: 2em;
   }
 }
 @media (min-width: 900px) {
