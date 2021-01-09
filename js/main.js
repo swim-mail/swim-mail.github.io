@@ -6,8 +6,8 @@ const COMPLETION_DAY = new Date("2021-03-19");
 const DISCHARGE_DAY = new Date("2022-11-14");
 const PRECISION = 5;
 const DEFAULT_THROTTLE = 500;
-//const API_PATH = "http://127.0.0.1:8088";
-
+const API_PATH = "http://127.0.0.1:8088";
+const API_TIMEOUT = 10;
 //Animator
 
 class Animator {
@@ -388,7 +388,7 @@ window.onpopstate = (evt) => {
 };
 
 window.addEventListener("load", function () {
-  console.log("load history hooked");
+  //console.log("load history hooked");
   window.history.pushState({ beforeExit: true }, "");
   window.history.pushState({ now: "main" }, "");
 });
@@ -577,7 +577,13 @@ const autosaver = window.setInterval(() => {
   }
 }, 1000);
 //편지 전송
-
+const loading = (onoff) => {
+  if (onoff) {
+    document.querySelector("loading").style.cssText = "display:block";
+  } else {
+    document.querySelector("loading").style.cssText = "";
+  }
+};
 const send = () => {
   let data = {
     zipcode: forms.postcode,
@@ -589,37 +595,54 @@ const send = () => {
     contents: forms.body,
     password: forms.pw,
   };
-  //API 연동부분
-  ajax = async () => {
-    /*
-    const res = await fetch(API_PATH, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
+  if (data.name == "" || data.password == "") {
+    toast("warning", "프로필을 먼저 등록해주세요");
+    letter.editProfileButton.click();
+  } else {
+    //API 연동부분
+    timeout = new Promise((resolve, reject) => {
+      loading(true);
+      const id = setTimeout(() => {
+        clearTimeout(id);
+        reject("timeout!");
+      }, API_TIMEOUT * 1000);
     });
-    const body = await res.json();
-    return Number(body.result);*/
-    return -99;
-  };
-  console.log(JSON.stringify(data));
+    ajax = async () => {
+      const res = await fetch(API_PATH, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const body = await res.json();
+      return Number(body.result);
+      //return -99;
+    };
 
-  ajax().then((res) => {
-    if (res == 2) {
-      letter.exitButton.click();
-      window.setTimeout(() => {
-        forms.title = "";
-        forms.body = "";
-        forms.tempSave();
-      }, 1000);
-      toast("success", "전송되었습니다.");
-    } else if (res == -1) {
-      toast("warning", "공군 서버 응답없음- 다시 시도해주세요!");
-    } else if (res == -2) {
-      toast("warning", "전송 과정 오류 - 다시 시도해주세요!");
-    } else if (res == -99) {
-      toast("warning", "개발중입니다.");
-    }
-  });
+    console.log(JSON.stringify(data));
+    Promise.race([ajax(), timeout])
+      .then((res) => {
+        loading(false);
+        if (res == 2) {
+          letter.exitButton.click();
+          window.setTimeout(() => {
+            forms.title = "";
+            forms.body = "";
+            forms.tempSave();
+          }, 1000);
+          toast("success", "전송되었습니다.");
+        } else if (res == -1) {
+          toast("warning", "공군 서버 응답없음- 다시 시도해주세요!");
+        } else if (res == -2) {
+          toast("warning", "전송 과정 오류 - 다시 시도해주세요!");
+        } else if (res == -99) {
+          toast("warning", "개발중입니다.");
+        }
+      })
+      .catch((err) => {
+        loading(false);
+        toast("warning", "API 서버 응답없음- 다시 시도해주세요!");
+      });
+  }
 };
 document.querySelectorAll("#send").forEach((x) => {
   x.addEventListener("click", send);
@@ -628,9 +651,9 @@ document.querySelectorAll("#send").forEach((x) => {
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
-      .register("service-worker.js") // serviceWorker 파일 경로
+      .register("service-worker-min.js") // serviceWorker 파일 경로
       .then((reg) => {
-        console.log("Service worker registered.", reg);
+        //console.log("Service worker registered.", reg);
       })
       .catch((e) => console.log(e));
   });
