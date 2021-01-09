@@ -324,7 +324,7 @@ container.writeButton.addEventListener("click", (evt) => {
   rtd.stop();
   container.classList.add("blur");
   letter.classList.remove("slide");
-  if (!DB.access.name || !DB.access.password) {
+  if (!DB.access.name || !DB.access.pw) {
     setTimeout(() => {
       document.querySelector(".sender").classList.add("highlight");
     }, 1000);
