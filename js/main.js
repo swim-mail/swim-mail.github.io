@@ -1,13 +1,20 @@
 //상수
 const MAX_desktop = 40;
 const MAX_mobile = 30;
-const ENLIST_DAY = new Date("2021-02-15");
-const COMPLETION_DAY = new Date("2021-03-19");
-const DISCHARGE_DAY = new Date("2022-11-14");
+const ENLIST_DAY_ = new Date("2021-02-15");
+const COMPLETION_DAY_ = new Date("2021-03-19");
+const DISCHARGE_DAY_ = new Date("2022-11-14");
+
+//베타서비스 데이터
+const ENLIST_DAY = new Date("2021-01-04");
+const COMPLETION_DAY = new Date("2021-02-05");
+const DISCHARGE_DAY = new Date("2022-10-03");
+
 const PRECISION = 5;
 const DEFAULT_THROTTLE = 500;
-const API_PATH = "http://127.0.0.1:8088";
+const API_PATH = "https://us-central1-swim-mail.cloudfunctions.net/send-test";
 const API_TIMEOUT = 10;
+const NOW_INTERVAL = 10;
 //Animator
 
 class Animator {
@@ -52,9 +59,11 @@ class PaperGraph extends HTMLElement {
     this.start();
   }
   update(today, value) {
-    this.today = today;
-    this.value = value;
-    this.start();
+    if (this.today != today || this.value != value) {
+      this.today = today;
+      this.value = value;
+      this.start();
+    }
   }
   start() {
     if (!window.matchMedia("(min-width: 900px)").matches) {
@@ -68,7 +77,10 @@ class PaperGraph extends HTMLElement {
         )}vw
       }
       .tdfig{
-        height:${Math.min(this.max - 10, Math.max(this.today, 10)) * 0.8}vw
+        height:${
+          (Math.min(this.max - 10, Math.max(this.today, 10)) * 0.8,
+          ((10 - this.total + this.today) / 10) * this.max)
+        }vw
       }
     @media (max-width: 900px) {
       paper-graph{
@@ -77,7 +89,10 @@ class PaperGraph extends HTMLElement {
       margin-bottom:3em;
       }
       .tdfig{
-        height:${Math.min(this.max + 10, Math.max(this.today * 1.5, 15))}vw
+        height:${
+          (Math.min(this.max + 10, Math.max(this.today * 1.5, 15)),
+          ((10 - this.total + this.today) / 10) * this.max)
+        }vw
       }
     }
     </style>
@@ -118,7 +133,7 @@ class PaperGraph extends HTMLElement {
     const ft = `
       </svg>
         `;
-    if (this.value < 10) {
+    if (this.value < 12) {
       var fig = `
       <div class="tdfig">
       <span>오늘의/총 편지</span><br>
@@ -687,13 +702,30 @@ window.addEventListener("beforeinstallprompt", (e) => {
   });
 });
 //테스트용 초기값
-chart.update(10, 123);
+//chart.update(15, 15);
 
 const rtd = new Animator(300);
 rtd.register(() => {
   now = new Date();
-  offset = new Date(now * 1 + 40 * (1000 * 60 * 60 * 24));
-  completion.update(offset);
-  discharge.update(offset);
+  completion.update(now);
+  discharge.update(now);
 });
 rtd.start();
+
+getCount = () => {
+  now = async () => {
+    const res = await fetch(API_PATH);
+    return await res.json();
+  };
+  now().then((res) => {
+    if (res.result == 1) {
+      chart.update(res.today, res.total);
+    } else {
+      toast("warning", "편지수를 받아올 수 없습니다.");
+    }
+  });
+};
+getCount();
+const rtn = setInterval(() => {
+  getCount();
+}, 1000 * NOW_INTERVAL);
