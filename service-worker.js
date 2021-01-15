@@ -22,25 +22,8 @@ self.addEventListener("install", (event) => {
 
 self.addEventListener("fetch", function (e) {
   e.respondWith(
-    caches.match(e.request).then(function (r) {
-      console.log("[Service Worker] Fetching resource: " + e.request.url);
-      return fetch(e.request)
-        .then(function (response) {
-          if (e.request.method.toUpperCase() == "GET") {
-            return caches.open(CACHE_NAME).then(function (cache) {
-              console.log(
-                "[Service Worker] Caching new resource: " + e.request.url
-              );
-              cache.put(e.request, response.clone());
-              return response;
-            });
-          } else {
-            return response;
-          }
-        })
-        .catch((e) => {
-          return r;
-        });
+    fetch(r.request).catch(function () {
+      return cache.match(e.requst);
     })
   );
 });
