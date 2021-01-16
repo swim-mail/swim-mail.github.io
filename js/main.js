@@ -65,7 +65,14 @@ class PaperGraph extends HTMLElement {
       this.start();
     }
   }
-  start() {
+  error() {
+    this.start(true);
+  }
+  start(flag) {
+    if (flag) {
+      this.today = 10;
+      this.value = 30;
+    }
     if (!window.matchMedia("(min-width: 900px)").matches) {
       this.max = MAX_mobile;
     }
@@ -137,19 +144,25 @@ class PaperGraph extends HTMLElement {
       var fig = `
       <div class="tdfig">
       <span>오늘의/총 편지</span><br>
-      <span class="big">${this.today}</span><span>/${this.value}개</span>
+      <span class="big">${flag ? "?" : this.today}</span><span>/${
+        flag ? "?" : this.value
+      }개</span>
       </div>
       `;
     } else {
       var fig = `
       <div class="tdfig tcd">
       <span>오늘</span><span class='mbhide'> 전달된 편지</span><br>
-      <count-up value="${this.today}" dur="1.2" class="big"></count-up><span class="faded">개</span>
+      <count-up value="${flag ? "?" : this.today}" dur="1.2" class="big">${
+        flag ? "?" : ""
+      }</count-up><span class="faded">개</span>
       </div>
 
       <div class="ttfig">
       <span>총</span><span class='mbhide'> 전달된 편지</span><br>
-      <count-up value="${this.value}" dur="1.2" class="big"></count-up><span>개</span>
+      <count-up value="${flag ? "?" : this.value}" dur="1.2" class="big">${
+        flag ? "?" : ""
+      }</count-up><span>개</span>
       </div>
       `;
     }
@@ -722,7 +735,7 @@ const getCount = () => {
       chart.update(res.today, res.total);
     } else {
       clearInterval(rtn);
-      document.querySelectorAll("count-up").forEach((x) => (x.innerText = "?"));
+      chart.error();
       toast("warning", "편지수를 받아올 수 없습니다.");
     }
   });
