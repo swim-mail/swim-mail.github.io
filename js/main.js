@@ -712,7 +712,7 @@ rtd.register(() => {
 });
 rtd.start();
 
-getCount = () => {
+const getCount = () => {
   now = async () => {
     const res = await fetch(API_PATH);
     return await res.json();
@@ -721,6 +721,8 @@ getCount = () => {
     if (res.result == 1) {
       chart.update(res.today, res.total);
     } else {
+      clearInterval(rtn);
+      document.querySelectorAll("count-up").forEach((x) => (x.innerText = "?"));
       toast("warning", "편지수를 받아올 수 없습니다.");
     }
   });
