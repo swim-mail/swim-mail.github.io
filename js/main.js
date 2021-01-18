@@ -567,6 +567,7 @@ document.querySelectorAll("#profile input").forEach((x) => {
 profile.saveButton.addEventListener("click", () => {
   DB.save(forms);
   profileInfo.render(forms);
+  forms.pw = localStorage.pw;
   profile.querySelector(".back").click();
   toast("success", "프로필을 저장하였습니다.");
 });
@@ -726,6 +727,7 @@ rtd.register(() => {
 rtd.start();
 
 const getCount = () => {
+  chart.update(DB.access.today, DB.access.total);
   now = async () => {
     const res = await fetch(API_PATH);
     return await res.json();
@@ -733,6 +735,8 @@ const getCount = () => {
   now().then((res) => {
     if (res.result == 1) {
       chart.update(res.today, res.total);
+      DB.access.today = res.today;
+      DB.access.total = res.total;
     } else {
       clearInterval(rtn);
       chart.error();
