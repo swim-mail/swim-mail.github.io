@@ -237,7 +237,7 @@ class CountUp extends HTMLElement {
     const easeOut = (t) => (t > 1 ? 1 : t * (2 - t));
     let d = timestamp - this.start;
     this.i = easeOut(d / (this.dur * 1000)) * this.value;
-    if (this.i < this.value) {
+    if (this.i <= this.value) {
       this.innerText = Math.ceil(this.i);
       window.requestAnimationFrame(this.frame.bind(this));
     }
