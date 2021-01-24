@@ -12,9 +12,10 @@ const DISCHARGE_DAY = new Date("2022-10-03");
 
 const PRECISION = 5;
 const DEFAULT_THROTTLE = 500;
-const API_PATH = "https://us-central1-swim-mail.cloudfunctions.net/send-test";
-const API_TIMEOUT = 10;
-const NOW_INTERVAL = 10;
+const API_PATH = "https://asia-northeast3-swim-mail.cloudfunctions.net/";
+const API_TIMEOUT = 10; //sec
+const NOW_INTERVAL = 10; //sec
+const FORCE_UPDATE_INTERVAL = 1; //min
 //Animator
 
 class Animator {
@@ -350,6 +351,7 @@ container.writeButton.addEventListener("click", (evt) => {
     history.pushState({ now: "letter" }, "", location.href);
   }
   rtd.stop();
+  mailcounter.stop();
   container.classList.add("blur");
   letter.classList.remove("slide");
   if (!DB.access.name || !DB.access.pw) {
@@ -394,6 +396,7 @@ document.querySelectorAll(".back").forEach((x) => {
     currentPopup.previousElementSibling.classList.remove("blur");
     if (currentPopup.previousElementSibling.classList.value == "container") {
       rtd.start();
+      mailcounter.start();
     } else {
       document.querySelectorAll(".clsd").forEach((x) => {
         x.classList.remove("clsd");
@@ -645,7 +648,7 @@ const send = () => {
       }, API_TIMEOUT * 1000);
     });
     ajax = async () => {
-      const res = await fetch(API_PATH, {
+      const res = await fetch(API_PATH + "send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -726,25 +729,66 @@ rtd.register(() => {
 });
 rtd.start();
 
+const getDBCount = () => {
+  chart.update(DB.access.today || 0, DB.access.total || 0);
+};
 const getCount = () => {
-  chart.update(DB.access.today, DB.access.total);
-  now = async () => {
-    const res = await fetch(API_PATH);
+  ajax = async (force) => {
+    const res = await fetch(
+      API_PATH + "count",
+      force ? { method: "POST" } : {}
+    );
     return await res.json();
   };
-  now().then((res) => {
-    if (res.result == 1) {
-      chart.update(res.today, res.total);
-      DB.access.today = res.today;
-      DB.access.total = res.total;
-    } else {
-      clearInterval(rtn);
-      chart.error();
-      toast("warning", "편지수를 받아올 수 없습니다.");
+
+  ajax().then((res) => {
+    chart.update(res.today, res.total);
+    DB.access.today = res.today;
+    DB.access.total = res.total;
+    if (
+      new Date() - new Date(res["update-time"]) >
+      1000 * 60 * FORCE_UPDATE_INTERVAL
+    ) {
+      ajax(true).then((res) => {
+        if (res.result == 1) {
+          chart.update(res.today, res.total);
+          DB.access.today = res.today;
+          DB.access.total = res.total;
+        } else {
+          clearInterval(rtn);
+          chart.error();
+          toast("warning", "편지수를 받아올 수 없습니다.");
+        }
+      });
     }
   });
 };
-getCount();
+
+class Counter {
+  constructor(throttle) {
+    this.interval = null;
+    this.throttle = throttle || NOW_INTERVAL;
+  }
+  register(f) {
+    this.f = f;
+  }
+  start() {
+    this.interval = setInterval(this.f, 1000 * this.throttle);
+  }
+  stop() {
+    clearInterval(this.interval);
+  }
+}
+
+getDBCount();
+const mailcounter = new Counter(NOW_INTERVAL);
+mailcounter.register(() => {
+  getCount();
+});
+mailcounter.start();
+
+/*
 const rtn = setInterval(() => {
   getCount();
 }, 1000 * NOW_INTERVAL);
+*/
