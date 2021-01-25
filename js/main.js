@@ -773,6 +773,7 @@ class Counter {
     this.f = f;
   }
   start() {
+    this.f();
     this.interval = setInterval(this.f, 1000 * this.throttle);
   }
   stop() {
