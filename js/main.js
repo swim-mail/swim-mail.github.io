@@ -730,7 +730,11 @@ rtd.register(() => {
 rtd.start();
 
 const getDBCount = () => {
-  chart.update(DB.access.today || 0, DB.access.total || 0);
+  now = new Date();
+  chart.update(
+    DB.access.cachedate == now.getDate() ? DB.access.today : 0 || 0,
+    DB.access.total || 0
+  );
 };
 const getCount = () => {
   ajax = async (force) => {
@@ -745,6 +749,7 @@ const getCount = () => {
     chart.update(res.today, res.total);
     DB.access.today = res.today;
     DB.access.total = res.total;
+    DB.access.cachedate = new Date().getDate();
     if (
       new Date() - new Date(res["update-time"]) >
       1000 * 60 * FORCE_UPDATE_INTERVAL
