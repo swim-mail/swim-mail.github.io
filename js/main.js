@@ -1,18 +1,13 @@
 //상수
 const MAX_desktop = 40;
 const MAX_mobile = 30;
-const ENLIST_DAY_ = new Date("2021-02-15");
-const COMPLETION_DAY_ = new Date("2021-03-19");
-const DISCHARGE_DAY_ = new Date("2022-11-14");
-
-//베타서비스 데이터
-const ENLIST_DAY = new Date("2021-01-04");
-const COMPLETION_DAY = new Date("2021-02-05");
-const DISCHARGE_DAY = new Date("2022-10-03");
+const ENLIST_DAY = new Date("2021-02-15");
+const COMPLETION_DAY = new Date("2021-03-19");
+const DISCHARGE_DAY = new Date("2022-11-14");
 
 const PRECISION = 5;
 const DEFAULT_THROTTLE = 500;
-const API_PATH = "https://asia-northeast3-swim-mail.cloudfunctions.net/";
+//const API_PATH = "https://asia-northeast3-swim-mail.cloudfunctions.net/";
 const API_TIMEOUT = 10; //sec
 const NOW_INTERVAL = 10; //sec
 const FORCE_UPDATE_INTERVAL = 1; //min
