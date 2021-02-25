@@ -4,10 +4,13 @@ const MAX_mobile = 30;
 const ENLIST_DAY = new Date("2021-02-15");
 const COMPLETION_DAY = new Date("2021-03-19");
 const DISCHARGE_DAY = new Date("2022-11-14");
+
 const PRECISION = 5;
 const DEFAULT_THROTTLE = 500;
-const API_PATH = "http://127.0.0.1:8088";
-const API_TIMEOUT = 10;
+//const API_PATH = "https://asia-northeast3-swim-mail.cloudfunctions.net/";
+const API_TIMEOUT = 10; //sec
+const NOW_INTERVAL = 10; //sec
+const FORCE_UPDATE_INTERVAL = 1; //min
 //Animator
 
 class Animator {
@@ -52,11 +55,20 @@ class PaperGraph extends HTMLElement {
     this.start();
   }
   update(today, value) {
-    this.today = today;
-    this.value = value;
-    this.start();
+    if (this.today != today || this.value != value) {
+      this.today = today;
+      this.value = value;
+      this.start();
+    }
   }
-  start() {
+  error() {
+    this.start(true);
+  }
+  start(flag) {
+    if (flag) {
+      this.today = 10;
+      this.value = 30;
+    }
     if (!window.matchMedia("(min-width: 900px)").matches) {
       this.max = MAX_mobile;
     }
@@ -68,7 +80,10 @@ class PaperGraph extends HTMLElement {
         )}vw
       }
       .tdfig{
-        height:${Math.min(this.max - 10, Math.max(this.today, 10)) * 0.8}vw
+        height:${
+          (Math.min(this.max - 10, Math.max(this.today, 10)) * 0.8,
+          ((10 - this.total + this.today) / 10) * this.max)
+        }vw
       }
     @media (max-width: 900px) {
       paper-graph{
@@ -77,7 +92,10 @@ class PaperGraph extends HTMLElement {
       margin-bottom:3em;
       }
       .tdfig{
-        height:${Math.min(this.max + 10, Math.max(this.today * 1.5, 15))}vw
+        height:${
+          (Math.min(this.max + 10, Math.max(this.today * 1.5, 15)),
+          ((10 - this.total + this.today) / 10) * this.max)
+        }vw
       }
     }
     </style>
@@ -118,23 +136,29 @@ class PaperGraph extends HTMLElement {
     const ft = `
       </svg>
         `;
-    if (this.value < 10) {
+    if (this.value < 12) {
       var fig = `
       <div class="tdfig">
       <span>오늘의/총 편지</span><br>
-      <span class="big">${this.today}</span><span>/${this.value}개</span>
+      <span class="big">${flag ? "?" : this.today}</span><span>/${
+        flag ? "?" : this.value
+      }개</span>
       </div>
       `;
     } else {
       var fig = `
       <div class="tdfig tcd">
       <span>오늘</span><span class='mbhide'> 전달된 편지</span><br>
-      <count-up value="${this.today}" dur="1.2" class="big"></count-up><span class="faded">개</span>
+      <count-up value="${flag ? "?" : this.today}" dur="1.2" class="big">${
+        flag ? "?" : ""
+      }</count-up><span class="faded">개</span>
       </div>
 
       <div class="ttfig">
       <span>총</span><span class='mbhide'> 전달된 편지</span><br>
-      <count-up value="${this.value}" dur="1.2" class="big"></count-up><span>개</span>
+      <count-up value="${flag ? "?" : this.value}" dur="1.2" class="big">${
+        flag ? "?" : ""
+      }</count-up><span>개</span>
       </div>
       `;
     }
@@ -209,7 +233,7 @@ class CountUp extends HTMLElement {
     const easeOut = (t) => (t > 1 ? 1 : t * (2 - t));
     let d = timestamp - this.start;
     this.i = easeOut(d / (this.dur * 1000)) * this.value;
-    if (this.i < this.value) {
+    if (this.i <= this.value) {
       this.innerText = Math.ceil(this.i);
       window.requestAnimationFrame(this.frame.bind(this));
     }
@@ -322,6 +346,7 @@ container.writeButton.addEventListener("click", (evt) => {
     history.pushState({ now: "letter" }, "", location.href);
   }
   rtd.stop();
+  mailcounter.stop();
   container.classList.add("blur");
   letter.classList.remove("slide");
   if (!DB.access.name || !DB.access.pw) {
@@ -366,6 +391,7 @@ document.querySelectorAll(".back").forEach((x) => {
     currentPopup.previousElementSibling.classList.remove("blur");
     if (currentPopup.previousElementSibling.classList.value == "container") {
       rtd.start();
+      mailcounter.start();
     } else {
       document.querySelectorAll(".clsd").forEach((x) => {
         x.classList.remove("clsd");
@@ -539,6 +565,7 @@ document.querySelectorAll("#profile input").forEach((x) => {
 profile.saveButton.addEventListener("click", () => {
   DB.save(forms);
   profileInfo.render(forms);
+  forms.pw = localStorage.pw;
   profile.querySelector(".back").click();
   toast("success", "프로필을 저장하였습니다.");
 });
@@ -616,7 +643,7 @@ const send = () => {
       }, API_TIMEOUT * 1000);
     });
     ajax = async () => {
-      const res = await fetch(API_PATH, {
+      const res = await fetch(API_PATH + "send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -687,13 +714,82 @@ window.addEventListener("beforeinstallprompt", (e) => {
   });
 });
 //테스트용 초기값
-chart.update(10, 123);
+//chart.update(15, 15);
 
 const rtd = new Animator(300);
 rtd.register(() => {
   now = new Date();
-  offset = new Date(now * 1 + 40 * (1000 * 60 * 60 * 24));
-  completion.update(offset);
-  discharge.update(offset);
+  completion.update(now);
+  discharge.update(now);
 });
 rtd.start();
+
+const getDBCount = () => {
+  now = new Date();
+  chart.update(
+    DB.access.cachedate == now.getDate() ? DB.access.today : 0 || 0,
+    DB.access.total || 0
+  );
+};
+const getCount = () => {
+  ajax = async (force) => {
+    const res = await fetch(
+      API_PATH + "count",
+      force ? { method: "POST" } : {}
+    );
+    return await res.json();
+  };
+
+  ajax().then((res) => {
+    chart.update(res.today, res.total);
+    DB.access.today = res.today;
+    DB.access.total = res.total;
+    DB.access.cachedate = new Date().getDate();
+    if (
+      new Date() - new Date(res["update-time"]) >
+      1000 * 60 * FORCE_UPDATE_INTERVAL
+    ) {
+      ajax(true).then((res) => {
+        if (res.result == 1) {
+          chart.update(res.today, res.total);
+          DB.access.today = res.today;
+          DB.access.total = res.total;
+        } else {
+          clearInterval(rtn);
+          chart.error();
+          toast("warning", "편지수를 받아올 수 없습니다.");
+        }
+      });
+    }
+  });
+};
+
+class Counter {
+  constructor(throttle) {
+    this.interval = null;
+    this.throttle = throttle || NOW_INTERVAL;
+  }
+  register(f) {
+    this.f = f;
+  }
+  start() {
+    this.f();
+    this.interval = setInterval(this.f, 1000 * this.throttle);
+  }
+  stop() {
+    clearInterval(this.interval);
+  }
+}
+
+getDBCount();
+const mailcounter = new Counter(NOW_INTERVAL);
+mailcounter.register(() => {
+  getCount();
+});
+mailcounter.start();
+
+/*
+const rtn = setInterval(() => {
+  getCount();
+}, 1000 * NOW_INTERVAL);
+*/

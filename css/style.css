@@ -434,7 +434,7 @@ pro-bar #percent {
   padding: 0 0.5em;
   width: calc(88% - 3em);
   border: 0;
-  background: #dddddd;
+  background: #f0f0f0;
   border-radius: 3em;
   transition: background 1s;
 }
@@ -451,7 +451,7 @@ pro-bar #percent {
 }
 .card.addr .forms .inp input:focus {
   outline: none;
-  filter: brightness(1.1);
+  filter: brightness(1.035);
 }
 .card.addr .forms span.caution,
 .card.addr .forms span.cautext {
@@ -476,7 +476,7 @@ span.cautext b {
   color: #af1a1a;
 }
 .card.addr .forms .inp:last-child input {
-  background: #eba5a5;
+  background: #f7b6b6;
 }
 span.cautext:last-child {
   margin-left: calc(13% + 3.3em);
