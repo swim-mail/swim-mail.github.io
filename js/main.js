@@ -7,7 +7,7 @@ const DISCHARGE_DAY = new Date("2022-11-14");
 
 const PRECISION = 5;
 const DEFAULT_THROTTLE = 500;
-//const API_PATH = "https://asia-northeast3-swim-mail.cloudfunctions.net/";
+const API_PATH = "https://asia-northeast3-swim-mail.cloudfunctions.net/";
 const API_TIMEOUT = 10; //sec
 const NOW_INTERVAL = 10; //sec
 const FORCE_UPDATE_INTERVAL = 1; //min
@@ -713,6 +713,7 @@ window.addEventListener("beforeinstallprompt", (e) => {
     });
   });
 });
+
 //테스트용 초기값
 //chart.update(15, 15);
 
