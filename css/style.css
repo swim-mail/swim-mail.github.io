@@ -407,7 +407,7 @@ pro-bar #percent {
   font-weight: 500;
 }
 .card.addr .forms {
-  overflow: scroll;
+  overflow: auto;
 }
 .card.addr .forms .inp {
   font-size: 1em;
