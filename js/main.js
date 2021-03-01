@@ -331,7 +331,7 @@ const AttrLinker = (obj, properties) => {
 };
 
 const container = document.querySelector(".container");
-DOMLinker(container, { writeButton: "#writebut" });
+DOMLinker(container, { writeButton: ".writearea" });
 const letter = document.querySelector("div#letter");
 DOMLinker(letter, {
   editProfileButton: "#pfbut",
@@ -594,7 +594,7 @@ AttrLinker(discharge, [
   ["percent", "pro-bar#dc", "value"],
   ["left", "#dcFig", "value"],
 ]);
-//편지 임시저장 기능
+//`편지` 임시저장 기능
 let unchanged = 0;
 const autosaver = window.setInterval(() => {
   if (!letter.classList.contains("slide")) {
