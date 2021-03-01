@@ -879,4 +879,7 @@ loading {
   .card.addr .mob {
     display: none !important;
   }
+  .card.addr .forms {
+    height: 40vh;
+  }
 }
