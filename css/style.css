@@ -27,6 +27,12 @@ body {
   flex-direction: column;
   display: flex;
 }
+.notice {
+  display: none;
+}
+.notice span.cardtt {
+  line-height: 7em;
+}
 .row {
   display: flex;
   height: 49%;
@@ -672,6 +678,9 @@ loading {
     margin-bottom: 5vw;
     float: left;
     width: 50vw;
+  }
+  .notice .card {
+    height: calc(100vh - 20em);
   }
   .col2 .row:first-child {
     height: 78vw;
